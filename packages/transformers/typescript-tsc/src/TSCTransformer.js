@@ -1,8 +1,7 @@
 // @flow strict-local
 
 import {Transformer} from '@parcel/plugin';
-// $FlowFixMe
-import typescript from 'typescript';
+import localRequire from '@parcel/local-require';
 
 type TypescriptCompilerOptions = {
   module?: mixed,
@@ -24,6 +23,12 @@ export default new Transformer({
   async transform({asset, config}) {
     asset.type = 'js';
 
+    let typescript =
+      config == null
+        ? // $FlowFixMe
+          require('typescript')
+        : await localRequire('typescript', asset.filePath);
+
     // require typescript, installed locally in the app
     let transpilerOptions: TypescriptTranspilerOptions = {
       compilerOptions: {
@@ -40,10 +45,10 @@ export default new Transformer({
 
     // Overwrite default if config is found
     if (config) {
-      transpilerOptions.compilerOptions = Object.assign(
-        transpilerOptions.compilerOptions,
-        config.compilerOptions
-      );
+      transpilerOptions.compilerOptions = {
+        ...transpilerOptions.compilerOptions,
+        ...config.compilerOptions
+      };
     }
     transpilerOptions.compilerOptions.noEmit = false;
     // transpilerOptions.compilerOptions.sourceMap = options.sourceMaps;
