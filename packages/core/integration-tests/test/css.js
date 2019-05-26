@@ -252,7 +252,7 @@ describe('css', () => {
     );
   });
 
-  it.skip('should minify CSS in when minify is set', async function() {
+  it('should minify CSS when minify is set', async function() {
     let b = await bundle(
       path.join(__dirname, '/integration/cssnano/index.js'),
       {
